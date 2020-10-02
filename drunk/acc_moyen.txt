@@ -1,0 +1,282 @@
+ JB3156
+       x: Moyenne = -0.151834 Ecart type = 3.002242
+       y: Moyenne = -85561722.229061 Ecart type = 90318178.228662
+       z: Moyenne = 85561719.213302 Ecart type = 90318175.452454
+    Accélération moyenne = 2.182441
+
+
+    Suppression des valeurs anormales
+      Nombre de valeurs totale = 1177748
+      Nombre de valeurs exclue = 557047
+
+
+  Correction
+      x: Moyenne = -0.034189 Ecart type = 2.014278
+      y: Moyenne = -0.236845 Ecart type = 2.294506
+      z: Moyenne = -0.14891 Ecart type = 3.574008
+      Accélération moyenne = 2.182445
+Fichier compressé = ./phones_cor_npz/JB3156.npz
+
+
+
+
+ CC6740
+       x: Moyenne = 0.020149 Ecart type = 0.914246
+       y: Moyenne = 0.041857 Ecart type = 0.984942
+       z: Moyenne = 0.359845 Ecart type = 0.868611
+    Accélération moyenne = 0.817255
+
+
+    Suppression des valeurs anormales
+      Nombre de valeurs totale = 2374694
+      Nombre de valeurs exclue = 0
+
+
+  Correction
+      x: Moyenne = 0.020149 Ecart type = 0.914246
+      y: Moyenne = 0.041857 Ecart type = 0.984942
+      z: Moyenne = 0.359845 Ecart type = 0.868611
+      Accélération moyenne = 0.817256
+Fichier compressé = ./phones_cor_npz/CC6740.npz
+
+
+
+
+ BK7610
+       x: Moyenne = -0.006498 Ecart type = 0.138047
+       y: Moyenne = 0.007507 Ecart type = 0.13876
+       z: Moyenne = 0.002748 Ecart type = 0.127912
+    Accélération moyenne = 0.10985
+
+
+    Suppression des valeurs anormales
+      Nombre de valeurs totale = 1225726
+      Nombre de valeurs exclue = 0
+
+
+  Correction
+      x: Moyenne = -0.006498 Ecart type = 0.138047
+      y: Moyenne = 0.007507 Ecart type = 0.13876
+      z: Moyenne = 0.002748 Ecart type = 0.127912
+      Accélération moyenne = 0.10985
+Fichier compressé = ./phones_cor_npz/BK7610.npz
+
+
+
+
+ BU4707
+       x: Moyenne = 0.000646 Ecart type = 0.132427
+       y: Moyenne = -0.000708 Ecart type = 0.105755
+       z: Moyenne = 0.006592 Ecart type = 0.127554
+    Accélération moyenne = 0.115008
+
+
+    Suppression des valeurs anormales
+      Nombre de valeurs totale = 447422
+      Nombre de valeurs exclue = 0
+
+
+  Correction
+      x: Moyenne = 0.000646 Ecart type = 0.132427
+      y: Moyenne = -0.000708 Ecart type = 0.105755
+      z: Moyenne = 0.006592 Ecart type = 0.127554
+      Accélération moyenne = 0.115008
+Fichier compressé = ./phones_cor_npz/BU4707.npz
+
+
+
+
+ DC6359
+       x: Moyenne = 0.042825 Ecart type = 0.234328
+       y: Moyenne = 0.041204 Ecart type = 0.282418
+       z: Moyenne = -0.011455 Ecart type = 0.217735
+    Accélération moyenne = 0.164259
+
+
+    Suppression des valeurs anormales
+      Nombre de valeurs totale = 591357
+      Nombre de valeurs exclue = 0
+
+
+  Correction
+      x: Moyenne = 0.042825 Ecart type = 0.234328
+      y: Moyenne = 0.041204 Ecart type = 0.282418
+      z: Moyenne = -0.011455 Ecart type = 0.217735
+      Accélération moyenne = 0.164259
+Fichier compressé = ./phones_cor_npz/DC6359.npz
+
+
+
+
+ DK3500
+       x: Moyenne = -0.005707 Ecart type = 0.111117
+       y: Moyenne = 0.00826 Ecart type = 0.136241
+       z: Moyenne = 0.016043 Ecart type = 0.117066
+    Accélération moyenne = 0.045231
+
+
+    Suppression des valeurs anormales
+      Nombre de valeurs totale = 1339621
+      Nombre de valeurs exclue = 0
+
+
+  Correction
+      x: Moyenne = -0.005707 Ecart type = 0.111117
+      y: Moyenne = 0.00826 Ecart type = 0.136241
+      z: Moyenne = 0.016043 Ecart type = 0.117066
+      Accélération moyenne = 0.045231
+Fichier compressé = ./phones_cor_npz/DK3500.npz
+
+
+
+
+ HV0618
+       x: Moyenne = 0.00012 Ecart type = 0.060946
+       y: Moyenne = 0.001359 Ecart type = 0.07492
+       z: Moyenne = 0.005121 Ecart type = 0.069562
+    Accélération moyenne = 0.038235
+
+
+    Suppression des valeurs anormales
+      Nombre de valeurs totale = 1876012
+      Nombre de valeurs exclue = 0
+
+
+  Correction
+      x: Moyenne = 0.00012 Ecart type = 0.060946
+      y: Moyenne = 0.001359 Ecart type = 0.07492
+      z: Moyenne = 0.005121 Ecart type = 0.069562
+      Accélération moyenne = 0.038235
+Fichier compressé = ./phones_cor_npz/HV0618.npz
+
+
+
+
+ JR8022
+       x: Moyenne = -0.016132 Ecart type = 0.221883
+       y: Moyenne = 0.013814 Ecart type = 0.25666
+       z: Moyenne = -0.016746 Ecart type = 0.20518
+    Accélération moyenne = 0.156158
+
+
+    Suppression des valeurs anormales
+      Nombre de valeurs totale = 307525
+      Nombre de valeurs exclue = 0
+
+
+  Correction
+      x: Moyenne = -0.016132 Ecart type = 0.221883
+      y: Moyenne = 0.013814 Ecart type = 0.25666
+      z: Moyenne = -0.016746 Ecart type = 0.20518
+      Accélération moyenne = 0.156159
+Fichier compressé = ./phones_cor_npz/JR8022.npz
+
+
+
+
+ MC7070
+       x: Moyenne = 0.000631 Ecart type = 0.096285
+       y: Moyenne = 0.002872 Ecart type = 0.115932
+       z: Moyenne = 0.004278 Ecart type = 0.097984
+    Accélération moyenne = 0.062757
+
+
+    Suppression des valeurs anormales
+      Nombre de valeurs totale = 318599
+      Nombre de valeurs exclue = 0
+
+
+  Correction
+      x: Moyenne = 0.000631 Ecart type = 0.096285
+      y: Moyenne = 0.002872 Ecart type = 0.115932
+      z: Moyenne = 0.004278 Ecart type = 0.097984
+      Accélération moyenne = 0.062757
+Fichier compressé = ./phones_cor_npz/MC7070.npz
+
+
+
+
+ MJ8002
+       x: Moyenne = 0.000472 Ecart type = 0.136622
+       y: Moyenne = 0.005725 Ecart type = 0.13289
+       z: Moyenne = -0.003175 Ecart type = 0.118074
+    Accélération moyenne = 0.085633
+
+
+    Suppression des valeurs anormales
+      Nombre de valeurs totale = 631302
+      Nombre de valeurs exclue = 0
+
+
+  Correction
+      x: Moyenne = 0.000472 Ecart type = 0.136622
+      y: Moyenne = 0.005725 Ecart type = 0.13289
+      z: Moyenne = -0.003175 Ecart type = 0.118074
+      Accélération moyenne = 0.085633
+Fichier compressé = ./phones_cor_npz/MJ8002.npz
+
+
+
+
+ PC6771
+       x: Moyenne = -0.001091 Ecart type = 0.08625
+       y: Moyenne = 0.001968 Ecart type = 0.079867
+       z: Moyenne = 0.002554 Ecart type = 0.071322
+    Accélération moyenne = 0.043585
+
+
+    Suppression des valeurs anormales
+      Nombre de valeurs totale = 2141700
+      Nombre de valeurs exclue = 0
+
+
+  Correction
+      x: Moyenne = -0.001091 Ecart type = 0.08625
+      y: Moyenne = 0.001968 Ecart type = 0.079867
+      z: Moyenne = 0.002554 Ecart type = 0.071322
+      Accélération moyenne = 0.043585
+Fichier compressé = ./phones_cor_npz/PC6771.npz
+
+
+
+
+ SA0297
+       x: Moyenne = -0.002821 Ecart type = 0.109689
+       y: Moyenne = -0.000486 Ecart type = 0.105736
+       z: Moyenne = -0.004184 Ecart type = 0.105106
+    Accélération moyenne = 0.06416
+
+
+    Suppression des valeurs anormales
+      Nombre de valeurs totale = 962900
+      Nombre de valeurs exclue = 0
+
+
+  Correction
+      x: Moyenne = -0.002821 Ecart type = 0.109689
+      y: Moyenne = -0.000486 Ecart type = 0.105736
+      z: Moyenne = -0.004184 Ecart type = 0.105106
+      Accélération moyenne = 0.06416
+Fichier compressé = ./phones_cor_npz/SA0297.npz
+
+
+
+
+ SF3079
+       x: Moyenne = -7.7e-05 Ecart type = 0.184856
+       y: Moyenne = 0.0072 Ecart type = 0.160511
+       z: Moyenne = 0.000719 Ecart type = 0.146225
+    Accélération moyenne = 0.141143
+
+
+    Suppression des valeurs anormales
+      Nombre de valeurs totale = 662948
+      Nombre de valeurs exclue = 0
+
+
+  Correction
+      x: Moyenne = -7.7e-05 Ecart type = 0.184856
+      y: Moyenne = 0.0072 Ecart type = 0.160511
+      z: Moyenne = 0.000719 Ecart type = 0.146225
+      Accélération moyenne = 0.141143
+Fichier compressé = ./phones_cor_npz/SF3079.npz
