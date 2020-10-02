@@ -5,6 +5,7 @@
 
 # divers non suivi
 old/
+data/
 drunk/data/
 drunk/phones_cor_npz/
 drunk/phones_npz/
