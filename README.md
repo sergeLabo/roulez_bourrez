@@ -7,7 +7,7 @@ Estimation du taux d'alcoolémie d'un geek à partir des données de son télép
 
 ### La documentation sur le wiki ressources.labomedia.org
 
-[Exemple simple d'IA](https://ressources.labomedia.org/roulez_bourrez)
+[Roulez Bourrez](https://ressources.labomedia.org/roulez_bourrez)
 
 
 ### Merci à
