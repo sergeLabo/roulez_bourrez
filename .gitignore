@@ -9,6 +9,7 @@ accelerometer/
 bin/
 npz_final/
 .buildozer/
+accelerometer.ini
 
 # Forced !/poesie/poesie_1/poesie_clean.txt
 

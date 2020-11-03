@@ -1,13 +1,20 @@
 #:kivy 1.11.1
-<AccelerometerTest>:
+<Accelerometer>:
     BoxLayout:
         orientation: 'vertical'
         BoxLayout:
             size_hint_y: 0.05
+            orientation: 'horizontal'
             Button:
                 id: quit_button
-                background_color: (0.5, 0.5, 0.5, 1)
-                font_size: "22dp"
+                background_color: (0, 1.2, 0, 1)
+                font_size: "22sp"
+                text: 'Options'
+                on_release: app.open_settings()
+            Button:
+                id: quit_button
+                background_color: (0, 1.2, 0, 1)
+                font_size: "22sp"
                 text: 'Quitter'
                 on_release: root.do_quit()
         BoxLayout:
@@ -19,7 +26,7 @@
                 background_color: (1, 0, 1, 1)
                 text: 'Escalier  Montée'
                 color: (0, 1, 0, 1)
-                font_size: "22dp"
+                font_size: "22sp"
                 on_release: root.on_activity(0)
             ToggleButton:
                 group: 'action'
@@ -27,7 +34,7 @@
                 background_color: (1, 0, 1, 1)
                 text: 'Escalier  Descente'
                 color: (0, 1, 0, 1)
-                font_size: "22dp"
+                font_size: "22sp"
                 on_release: root.on_activity(1)
         BoxLayout:
             orientation: 'horizontal'
@@ -38,7 +45,7 @@
                 background_color: (1, 0, 1, 1)
                 text: 'Marche'
                 color: (0, 1, 0, 1)
-                font_size: "22dp"
+                font_size: "22sp"
                 on_release: root.on_activity(2)
             ToggleButton:
                 group: 'action'
@@ -46,30 +53,30 @@
                 background_color: (1, 0, 1, 1)
                 text: 'Assis'
                 color: (0, 1, 0, 1)
-                font_size: "22dp"
+                font_size: "22sp"
                 on_release: root.on_activity(3)
         BoxLayout:
             orientation: 'vertical'
             size_hint_y: 0.65
             Label:
                 id: x_label
-                font_size: "22dp"
+                font_size: "22sp"
                 text: 'X: '
             Label:
                 id: y_label
-                font_size: "22dp"
+                font_size: "22sp"
                 text: 'Y: '
             Label:
                 id: z_label
-                font_size: "22dp"
+                font_size: "22sp"
                 text: 'Z: '
             Label:
                 id: activity_label
-                font_size: "22dp"
+                font_size: "22sp"
                 text: 'Activité: '
             Label:
                 id: number
-                font_size: "22dp"
+                font_size: "22sp"
                 text: ''
             Label:
                 id: activ_sensor
@@ -81,6 +88,7 @@
             size_hint_y: 0.1
             ToggleButton:
                 id: acceleromer_status
-                font_size: "22dp"
+                background_color: (0, 1.2, 0, 1)
+                font_size: "28sp"
                 text: 'Start accelerometer'
-                on_press: root.on_sensor_status()
+                on_press: root.on_sensor_enable()
