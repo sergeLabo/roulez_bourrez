@@ -34,7 +34,7 @@ class FormattingData:
         self.save_npz(train, test, trainlabel, testlabel)
 
     def get_datas(self):
-        """Les datas sont regroupées par tuple de (norme, activité)"""
+        """Les datas sont regroupées par tuple de (norme, activité, time)"""
 
         all_x = all_y = all_z = all_a = None
         all_npz = Path("./accelerometer").glob('**/*.npz')
@@ -47,18 +47,21 @@ class FormattingData:
                 all_y = np.hstack((all_y, data["y"]))
                 all_z = np.hstack((all_z, data["z"]))
                 all_a = np.hstack((all_a, data["activity"]))
+                all_t = np.hstack((all_t, data["t"]))
             else:
                 all_x = data["x"]
                 all_y = data["y"]
                 all_z = data["z"]
                 all_a = data["activity"]
+                all_t = data["t"]
         print(f"Shape de toutes les datas: {all_x.shape}")
 
         norme_act = []
         for i in range(all_x.shape[0]):
             norme = int((all_x[i]**2 + all_y[i]**2 + all_z[i]**2 )**0.5)
             act = all_a[i]
-            norme_act.append([norme, act])
+            temps = all_t[i]
+            norme_act.append([norme, act, temps])
 
         return norme_act
 

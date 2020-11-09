@@ -1,12 +1,158 @@
 #:kivy 1.11.1
+#:import Clock kivy.clock.Clock
+
 <Accelerometer>:
+    orientation: 'vertical'
+    ActionBar:
+        pos_hint: {"top": 1}
+        icon: self.icon
+
+        ActionView:
+            use_separator: False
+            ActionPrevious:
+                markup: True
+                title: '[b]Accelerometer[/b]'
+                with_previous: False
+                app_icon: './images/icon_labo.png'
+                color: (1, 0, 0.5, 1)
+                font_size: '[size]40sp[/size]'
+            ActionOverflow:
+            ActionButton:
+                icon: './images/icon_labo.png'
+            ActionButton:
+                # #important: True  # place après Btn2 !
+                text: 'Ecran 1'
+                on_release: app.root.ids.sm.current = "first"
+            ActionButton:
+                text: 'Ecran 2'
+                on_release: app.root.ids.sm.current = "second"
+            ActionGroup:
+                text: 'Options'
+                ActionButton:
+                    text: 'Options Yelen'
+                    on_release: app.open_settings()
+                ActionButton:
+                    text: 'Main'
+                    on_release: app.root.ids.sm.current = "main"
+
+    ScreenManager:
+        id: sm
+        MainScreen:
+        Screen1:
+        Screen2:
+
+<MainScreen>:
+    name: 'main'
+    BoxLayout:
+        Button:
+            id: go_to_screen_1
+            background_color: (0, 1.2, 0, 1)
+            font_size: "18sp"
+            text: 'Ma belle application'
+            on_release: app.root.ids.sm.current = 'first'
+
+<Screen1>:
+    name: 'first'
     BoxLayout:
         orientation: 'vertical'
         BoxLayout:
-            size_hint_y: 0.05
+            orientation: 'vertical'
+            size_hint_y: 0.54
+            Label:
+                id: info
+                font_size: "22sp"
+                text: 'Info:'
+            Label:
+                id: x_y_z
+                font_size: "22sp"
+                text: 'X: Y: Z:'
+            Label:
+                id: number
+                font_size: "22sp"
+                text: 'Indice de boucle: '
+            Label:
+                id: activ_sensor
+                font_size: "22sp"
+                text: 'Capteur actif: '
+            Label:
+                id: th_freq
+                font_size: "22sp"
+                text: 'Fréquence à obtenir = 10'
+            Label:
+                id: real_freq
+                font_size: "22sp"
+                text: 'Fréquence réelle ='
+            Label:
+                id: activity_label
+                font_size: "22sp"
+                text: 'Activité: '
+        BoxLayout:
+            size_hint_y: 0.1
+            ToggleButton:
+                id: acceleromer_status
+                background_color: (0, 1.2, 0, 1)
+                font_size: "28sp"
+                text: 'Start accelerometer'
+                on_press: root.on_sensor_enable()
+        BoxLayout:
+            orientation: 'horizontal'
+            size_hint_y: 0.1
+            ToggleButton:
+                group: 'action'
+                size_hint_x: 0.50
+                background_color: (1, 0, 1, 1)
+                text: 'Application réduite'
+                color: (0, 1, 0, 1)
+                font_size: "18sp"
+                on_press: root.on_activity(0)
+            ToggleButton:
+                group: 'action'
+                size_hint_x: 0.50
+                background_color: (1, 0, 1, 1)
+                text: 'Application plein ecran\nCouvercle rabattu'
+                color: (0, 1, 0, 1)
+                font_size: "18sp"
+                on_press: root.on_activity(1)
+        BoxLayout:
+            orientation: 'horizontal'
+            size_hint_y: 0.1
+            ToggleButton:
+                group: 'action'
+                size_hint_x: 0.50
+                background_color: (1, 0, 1, 1)
+                text: 'Application plein ecran\nCouvercle ouvert'
+                color: (0, 1, 0, 1)
+                font_size: "18sp"
+                on_press: root.on_activity(2)
+            ToggleButton:
+                group: 'action'
+                size_hint_x: 0.50
+                background_color: (1, 0, 1, 1)
+                text: 'Application plein ecran\nCouvercle rabattu\nen mouvement'
+                color: (0, 1, 0, 1)
+                font_size: "18sp"
+                on_press: root.on_activity(3)
+        BoxLayout:
+            size_hint_y: 0.08
             orientation: 'horizontal'
             Button:
-                id: quit_button
+                id: save_button
+                background_color: (0, 1.2, 0, 1)
+                font_size: "18sp"
+                text: 'Une belle courbe'
+                on_release: root.go_to_plot()
+            Button:
+                id: save_npz
+                background_color: (0, 1.2, 0, 1)
+                font_size: "18sp"
+                text: 'Enregistrement des datas'
+                on_press: root.do_save_npz()
+                on_release: Clock.schedule_once(root.reset_save_npz_button, 2)
+        BoxLayout:
+            size_hint_y: 0.08
+            orientation: 'horizontal'
+            Button:
+                id: settings_button
                 background_color: (0, 1.2, 0, 1)
                 font_size: "22sp"
                 text: 'Options'
@@ -16,79 +162,18 @@
                 background_color: (0, 1.2, 0, 1)
                 font_size: "22sp"
                 text: 'Quitter'
+                on_press: root.do_save_npz()
                 on_release: root.do_quit()
-        BoxLayout:
-            orientation: 'horizontal'
-            size_hint_y: 0.1
-            ToggleButton:
-                group: 'action'
-                size_hint_x: 0.50
-                background_color: (1, 0, 1, 1)
-                text: 'Escalier  Montée'
-                color: (0, 1, 0, 1)
-                font_size: "22sp"
-                on_release: root.on_activity(0)
-            ToggleButton:
-                group: 'action'
-                size_hint_x: 0.50
-                background_color: (1, 0, 1, 1)
-                text: 'Escalier  Descente'
-                color: (0, 1, 0, 1)
-                font_size: "22sp"
-                on_release: root.on_activity(1)
-        BoxLayout:
-            orientation: 'horizontal'
-            size_hint_y: 0.1
-            ToggleButton:
-                group: 'action'
-                size_hint_x: 0.50
-                background_color: (1, 0, 1, 1)
-                text: 'Marche'
-                color: (0, 1, 0, 1)
-                font_size: "22sp"
-                on_release: root.on_activity(2)
-            ToggleButton:
-                group: 'action'
-                size_hint_x: 0.50
-                background_color: (1, 0, 1, 1)
-                text: 'Assis'
-                color: (0, 1, 0, 1)
-                font_size: "22sp"
-                on_release: root.on_activity(3)
-        BoxLayout:
-            orientation: 'vertical'
-            size_hint_y: 0.65
-            Label:
-                id: x_label
-                font_size: "22sp"
-                text: 'X: '
-            Label:
-                id: y_label
-                font_size: "22sp"
-                text: 'Y: '
-            Label:
-                id: z_label
-                font_size: "22sp"
-                text: 'Z: '
-            Label:
-                id: activity_label
-                font_size: "22sp"
-                text: 'Activité: '
-            Label:
-                id: number
-                font_size: "22sp"
-                text: ''
-            Label:
-                id: activ_sensor
-                text: 'Capteur actif: '
-            Label:
-                id: file_saved
-                text: 'Enregistrement de '
-        BoxLayout:
-            size_hint_y: 0.1
-            ToggleButton:
-                id: acceleromer_status
-                background_color: (0, 1.2, 0, 1)
-                font_size: "28sp"
-                text: 'Start accelerometer'
-                on_press: root.on_sensor_enable()
+
+<Screen2>:
+    name: 'second'
+    BoxLayout:  # boite globale
+        orientation: 'vertical'
+        id: boite_globale
+        BoxLayout:  # graph
+            size_hint_y: 0.01
+        BoxLayout:  # graph
+            size_hint_y: 0.98
+            id: graph_id
+        BoxLayout:  # graph
+            size_hint_y: 0.01

@@ -18,8 +18,10 @@ Ne pas oublier d'autoriser les droits d'écriture dans Paramètres/Applications
 sur Android.
 """
 
+
 import os
 from time import sleep
+from datetime import datetime
 from runpy import run_path
 from threading import Thread
 
@@ -29,7 +31,10 @@ kivy.require('1.11.1')
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
 from kivy.clock import Clock
-from kivy.properties import NumericProperty
+from kivy.properties import NumericProperty, ObjectProperty, StringProperty
+from kivy.uix.screenmanager import ScreenManager, Screen
+from kivy_garden.graph import Graph, MeshLinePlot
+
 
 from plyer import utils
 
@@ -66,25 +71,221 @@ SERVICE_NAME = 'org.kivy.accelerometer.ServicePong'
 print("SERVICE_NAME:", SERVICE_NAME)
 
 
-class Accelerometer(BoxLayout):
+class OSC:
+    """Ne fait que envoyer avec self.client
+    et recevoir avec self.server, en com avec service.py
+    """
+
+    def __init__(self):
+        self.sensor = "Recherche d'un capteur ..."
+        # a, b, c, activity, num, tempo
+        self.display_list = [0, 0, 0, -2, 0, 1, 0]
+        self.histo = []
+        self.server = OSCThreadServer()
+        self.server.listen(address=b'localhost',port=3003, default=True)
+        self.server.bind(b'/acc', self.on_acc)
+        self.server.bind(b'/sensor', self.on_sensor)
+        self.client = OSCClient(b'localhost', 3001)
+        self.t_init = 0
+
+    def on_sensor(self, sens):
+        """Vlaleur possible: Andoid Virtual No sensor"""
+        self.sensor = sens.decode('utf-8')
+
+    def on_acc(self, *args):
+        self.display_list = args
+        a, b, c, t = (  self.display_list[0],
+                        self.display_list[1],
+                        self.display_list[2],
+                        self.display_list[6])
+
+        norme = int((a**2 + b**2 + c**2)**0.5)
+        # 920736845
+        # 36845
+        if self.t_init:
+            tx = (t - self.t_init)/100
+        else:
+            self.t_init = t
+            tx = 0
+        print(tx)
+        # liste de couple (x, y)
+        self.histo.append((tx, norme))
+        if len(self.histo) > 100:
+            del self.histo[0]
+
+
+class MainScreen(Screen):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+
+class Screen2(Screen):
+
+    graph_id = ObjectProperty()
+    titre = StringProperty("Capteur")
+    # Affichage sur le bouton au dessus du graphique
+    period = StringProperty("Période")
+
+    def __init__(self, **kwargs):
+        """self.graph ne peut pas être initié ici.
+        Il doit être dans une autre méthode et appelé plus tard.
+        """
+
+        super().__init__(**kwargs)
+        self.app = App.get_running_app()
+
+        self.unit_x = "tutu"
+        self.unit_y = "tata"
+        self.graph = None
+        self.y_major = 1
+        self.titre = "Accelerometer"
+        self.reset = None
+        self.xlabel = ""
+
+        # Initialisation de la courbe avec sa couleur
+        # mode='points',
+        self.curve_plot = MeshLinePlot(mode='points', color=[1, 0, 0, 1])
+        # #self.curve_plot.mode = 'triangle_strip'
+        self.curve_plot.points = [(0, 0)]*101
+
+        # Appel tous les 2 secondes
+        Clock.schedule_interval(self.update, 2)
+
+    def graph_init(self):
+        """Initialisation de self.graph.
+        plot initié avec 100 couples [(x, y), ...]
+        """
+
+        print("Initialisation du graph")
+        # ## Si existe je détruits
+        if self.graph:
+            self.ids.graph_id.remove_widget(self.graph)
+            print("self.graph détruit")
+
+        if self.y_major:  # int
+            if len(self.app.osc.histo) > 5:
+                self.create_graph()
+            else:
+                self.reset = 1
+
+    def create_graph(self):
+        """Création du graph seul et pas d'ajout au widget"""
+
+        print("Appel de la création du graph ..")
+        self.unit_x = "minutes"
+
+        # Paramètres du graph en x
+        self.xmin = 0
+        self.xmax = 1000
+        self.x_ticks_major = 3600
+        self.x_ticks_minor = 600
+
+        # Paramètres du graph en y
+        self.ymin = 0
+        self.ymax = self.y_major
+        self.ylabel = self.unit_y
+        self.y_ticks_major = self.y_major/10
+        self.y_ticks_minor = 0  #5
+
+        # Je crée ou recrée
+        self.graph = Graph( background_color=(0.8, 0.8, 0.8, 1),
+                            border_color=(0, 0.1, 0.1, 1),
+                            xlabel=self.xlabel,
+                            ylabel=self.ylabel,
+                            x_ticks_minor=self.x_ticks_minor,
+                            x_ticks_major=self.x_ticks_major,
+                            y_ticks_major=self.y_ticks_major,
+                            x_grid_label=True,
+                            y_grid_label=True,
+                            padding=10,
+                            view_pos = (10, -10),
+                            x_grid=True,
+                            y_grid=True,
+                            xmin=self.xmin,
+                            xmax=self.xmax,
+                            ymin=self.ymin,
+                            ymax=self.ymax,
+                            tick_color=(1, 0, 1, 1),
+                            label_options={'color': (0.2, 0.2, 0.2, 1)})
+
+        self.graph.add_plot(self.curve_plot)
+        self.ids.graph_id.add_widget(self.graph)
+
+    def update(self, dt):
+        if self.reset:
+            self.reset = None
+            self.y_major = 0
+            self.graph_init()
+        else:
+            if not self.graph:
+                self.graph_init()
+
+        # Reset des points
+        self.curve_plot.points = []
+
+        # Echelle des y
+        y_major = self.get_y_major()
+        if y_major != self.y_major:
+            self.y_major = y_major
+            # reset du graph
+            # #self.graph_init()
+
+        # Apply value to plot
+        for h in self.app.osc.histo:
+            self.curve_plot.points.append([h[0], h[1]])
+
+        # #self.curve_plot.update()
+
+    def get_y_major(self):
+        """Le maxi de l'echelle des y"""
+
+        # Recherche du maxi
+        maxi = 0
+        for couple in self.app.osc.histo:
+            # #print(couple)
+            if couple[1] > maxi:
+                maxi = couple[1]
+
+        # Définition de l'échelle sur y soit 0 à y_major
+        if 1 <= maxi < 10:
+            a = 1
+        elif 10 <= maxi < 100:
+            a = 10
+        elif 100 <= maxi < 1000:
+            a = 100
+        elif 1000 <= maxi < 10000:
+            a = 1000
+        elif 10000 <= maxi < 100000:
+            a = 10000
+        else:
+            a = 1
+        # 756 --> 800 int(756/100) + 1 * 1000
+        if maxi < 0:
+            y_major = 1
+        else:
+            y_major = (int(maxi*1.1/a) + 1) * a
+
+        # #print("maxi:", maxi, "y_major", y_major)
+        return y_major
+
+
+class Screen1(Screen):
+    """Ecran d'affichage des datas envoyées par service.py
+    et reçues dans self.app.osc
+    """
 
     activity = NumericProperty(-1)
 
-    def __init__(self, app):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.app = App.get_running_app()
 
-        super().__init__()
-        self.app = app
-        self.root = self.app.get_running_app()
-        self.freq = self.root.frequency
-        self.save_number = self.root.save_number
         self.sensor_status = 0
-        Clock.schedule_interval(self.update_display, 1/self.freq)
+        # Delay de boucle
         Clock.schedule_once(self.client_once, 1)
 
     def client_once(self, dt):
-        # Envoi des arguments à service.py
-        self.root.client.send_message(b'/frequency', [self.freq])
-        self.root.client.send_message(b'/save_number', [self.save_number])
+        Clock.schedule_interval(self.update_display, 1)
 
     def on_sensor_enable(self):
         """Envoi au service de l'info sensor enable or not"""
@@ -92,61 +293,78 @@ class Accelerometer(BoxLayout):
         if self.sensor_status == 0:
             self.sensor_status = 1
             self.ids.acceleromer_status.text = "Stop Accelerometer"
+            self.freq = self.app.frequency  # vient de *.ini
+            self.app.osc.client.send_message(b'/frequency', [self.freq])
+            print("Envoi de /freq :", self.freq)
+
         elif self.sensor_status == 1:
             self.sensor_status = 0
             self.ids.acceleromer_status.text = "Start Accelerometer"
+
         print("Envoi de sensor_status:", self.sensor_status)
-        self.root.client.send_message(b'/sensor_enable', [self.sensor_status])
+        self.app.osc.client.send_message(b'/sensor_enable', [self.sensor_status])
 
     def on_activity(self, act):
-        self.root.client.send_message(b'/activity', [act])
+        self.app.osc.client.send_message(b'/activity', [act])
 
     def update_display(self, dt):
-        a, b, c, activity, num = (  self.root.display_list[0],
-                                    self.root.display_list[1],
-                                    self.root.display_list[2],
-                                    self.root.display_list[3],
-                                    self.root.display_list[4])
-        self.ids.x_label.text = "X: " + str(a)
-        self.ids.y_label.text = "Y: " + str(b)
-        self.ids.z_label.text = "Z: " + str(c)
-        self.ids.activity_label.text = "Activité: " + str(activity)
-        self.ids.number.text = "Indice de boucle: " + str(num)
-        self.ids.file_saved.text = self.root.file
-        self.ids.activ_sensor.text = f"Capteur actif: {self.root.sensor}"
+
+        a, b, c, activity, num, real_freq, t = (self.app.osc.display_list[0],
+                                                self.app.osc.display_list[1],
+                                                self.app.osc.display_list[2],
+                                                self.app.osc.display_list[3],
+                                                self.app.osc.display_list[4],
+                                                self.app.osc.display_list[5],
+                                                self.app.osc.display_list[6])
+        if activity == 0:
+            activity_str = "Application réduite"
+        elif activity == 1:
+            activity_str = "Application plein ecran\nCouvercle rabattu"
+        elif activity == 2:
+            activity_str = "Application plein ecran\nCouvercle ouvert"
+        elif activity == 3:
+            activity_str = "Application plein ecran\nCouvercle rabattu\nen mouvement"
+        else:
+            activity_str = "\nVous devez sélectionner une activité !"
+
+        self.ids.x_y_z.text = "X: " + str(a) + "   Y: " + str(b) + "   Z: " + str(c)
+        self.ids.activity_label.text = "Activité:\n" + activity_str
+        self.ids.number.text = "Cycle numéro: " + str(num)
+        self.ids.th_freq.text = f"Fréquence à obtenir = 10"
+        self.ids.real_freq.text = f"Fréquence réelle = {real_freq}"
+        self.ids.activ_sensor.text = f"Capteur actif: {self.app.osc.sensor}"
+
+    def go_to_plot(self):
+        pass
+
+    def do_save_npz(self):
+        self.root.client.send_message(b'/save_npz', [1])
+        self.ids.save_npz.text = "Datas enregistrées"
+
+    def reset_save_npz_button(self, dt):
+        self.ids.save_npz.text = "Enregistrement des datas"
 
     def do_quit(self):
-        self.app.get_running_app().do_quit()
+        self.root.do_quit()
 
 
-class AccelerometerApp(App):
+class Accelerometer(BoxLayout):
 
-    def build(self):
-        self.frequency = int(self.config.get('accelerometer', 'frequency'))
-        self.save_number = int(self.config.get('accelerometer', 'save_number'))
+    def __init__(self, app, **kwargs):
 
-        return Accelerometer(App)
+        super().__init__(**kwargs)
+        self.app = app
 
-    def on_start(self):
-        self.display_list = [0]*5
-        self.file = ""
-        self.sensor = ""
         self.service = None
-
-        self.server = OSCThreadServer()
-        self.server.listen(address=b'localhost',port=3003, default=True)
-        self.server.bind(b'/acc', self.on_message)
-        self.server.bind(b'/file', self.on_file)
-        self.server.bind(b'/sensor', self.on_sensor)
-        self.client = OSCClient(b'localhost', 3001)
-
+        self.app.osc = OSC()
         self.start_service()
 
     def start_service(self):
         if ANDROID:
+            # SERVICE_NAME = 'org.kivy.accelerometer.ServicePong'
             self.service = autoclass(SERVICE_NAME)
             self.m_activity = autoclass(u'org.kivy.android.PythonActivity').mActivity
-            argument = ''
+            argument = 'android:hardwareAccelerated="true"'
             self.service.start(self.m_activity, argument)
         else:
             # Equivaut à:
@@ -158,20 +376,18 @@ class AccelerometerApp(App):
             self.service.start()
             print("Thread lancé.")
 
-    def on_sensor(self, sens):
-        self.sensor = sens.decode('utf-8')
 
-    def on_file(self, f):
-        # acc_2020_11_01_14_26_46/acc_2020_11_01_14_29_53.npz
-        self.file = f.decode('utf-8')[-51:]
+class AccelerometerApp(App):
 
-    def on_message(self, *args):
-        self.display_list = args
+    def build(self):
+        return Accelerometer(self)
+
+    def on_start(self):
+        self.frequency = int(self.config.get('accelerometer', 'frequency'))
 
     def build_config(self, config):
         config.setdefaults('accelerometer',
-                            {'frequency': 50,
-                             'save_number': 3000})
+                            {'frequency': 50})
 
         config.setdefaults('kivy',
                             { 'log_level': 'debug',
@@ -186,17 +402,10 @@ class AccelerometerApp(App):
     def build_settings(self, settings):
         data = """[
                     {"type": "title", "title":"Configuration de l'accéléromètre"},
-
                     {"type": "numeric",
                       "title": "Fréquence",
-                      "desc": "de 1 à 50",
-                      "section": "accelerometer", "key": "frequency"},
-
-                    {"type": "numeric",
-                      "title": "Nombre de valeurs par fichier",
-                      "desc": "de 500 à 9000",
-                      "section": "accelerometer", "key": "save_number"}
-
+                      "desc": "de 1 à 100",
+                      "section": "accelerometer", "key": "frequency"}
                    ]"""
 
         # self.config est le config de build_config
@@ -211,29 +420,21 @@ class AccelerometerApp(App):
                 value = int(value)
                 print("Nouvelle Fréquence:", value)
                 if value < 1: value = 1
-                if value >= 50: value = 50
+                if value >= 100: value = 100
                 self.frequency = value
-                self.client.send_message(b'/frequency', [value])
+                self.osc.client.send_message(b'/frequency', [value])
                 # Save in ini
                 self.config.set('accelerometer', 'frequency', value)
 
-            # Enregistrement tous les
-            if token == ('accelerometer', 'save_number'):
-                value = int(value)
-                print("Nouveau nombre d'enregistrement par fichier:", value)
-                if value < 500: value = 500
-                if value >= 9000: value = 9000
-                self.save_number = value
-                self.client.send_message(b'/save_number', [value])
-                # Save in ini
-                self.config.set('accelerometer', 'save_number', value)
-
     def on_pause(self):
-        print("on_pause")
+        # Pour que l'application passe en pause si réduite, et continue si réactivée
+        print("on_pause return True")
         return True
 
     def on_resume(self):
-        print("on_resume")
+        # Pour que l'application passe en pause si fermée, et continue si réactivée
+        print("on_resume return True")
+        return True
 
     def do_quit(self):
         if ANDROID:
@@ -246,5 +447,20 @@ class AccelerometerApp(App):
         AccelerometerApp.get_running_app().stop()
 
 
+def get_datetime(date):
+    """de int(time()*1000), retourne datetime"""
+    return datetime.fromtimestamp((date + 1604000000000)/1000)
+
 if __name__ == '__main__':
     AccelerometerApp().run()
+
+"""'apply_property', 'ask_draw', 'bind', 'color', 'create_drawings',
+        'create_property', 'dispatch', 'dispatch_children', 'dispatch_generic',
+        'draw', 'events', 'fbind', 'funbind', 'funcx', 'funcy', 'get_drawings',
+        'get_group', 'get_property_observers', 'get_px_bounds', 'getter',
+        'is_event_type', 'iterate_points', 'mode', 'on_clear_plot', 'params',
+        'plot_mesh', 'points', 'properties', 'property', 'proxy_ref',
+        'register_event_type', 'set_mesh_size', 'setter', 'uid', 'unbind',
+        'unbind_uid', 'unproject', 'unregister_event_types', 'update', 'x_axis',
+        'x_px', 'y_axis', 'y_px'
+        """
